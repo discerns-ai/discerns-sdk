@@ -1,0 +1,14 @@
+# Source files (use dist instead)
+js/
+react/
+tsconfig.json
+tsup.config.ts
+
+# Development files
+node_modules/
+.git/
+*.log
+.npmrc
+.github
+
+
