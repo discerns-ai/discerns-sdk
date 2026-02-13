@@ -14,13 +14,17 @@ interface DiscernsChatbotProps {
     onNewConversation?: (conversationId: string) => void;
     style?: CSSProperties;
     className?: string;
+    theme?: 'light' | 'dark';
+    accent?: string;
 }
 
 
 export function DiscernsChatbot({
-    baseUrl = 'https://app.discerns.com',
+    baseUrl = 'https://app.discerns.ai',
     avatarInstanceId,
     avatarId,
+    theme,
+    accent,
     style,
     className,
     memoizedTools,
@@ -128,9 +132,12 @@ export function DiscernsChatbot({
         return protocol.onNewConversation(onNewConversationHandler);
     }, [protocol]);
 
+    const url = `${baseUrl}/avatars/${avatarId}/chat/embed?${avatarInstanceId ? `avatarInstanceId=${avatarInstanceId}&` : ''}theme=${theme || 'light'}${accent ? `&accent=${encodeURIComponent(accent)}` : ''}`;
+
     return <iframe
-        src={`${baseUrl}/avatars/${avatarId}${avatarInstanceId ? `?avatarInstanceId=${avatarInstanceId}` : ''}/chat/embed`}
+        src={url}
         ref={ref}
+        allow="microphone; picture-in-picture;"
         className={className}
         style={{
             border: 'solid 1px #dad5cf',

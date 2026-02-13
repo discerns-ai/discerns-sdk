@@ -276,10 +276,10 @@ A React component that handles embedding and lifecycle management.
 #### Props
 
 | Prop                        | Type                                   | Required | Default                   | Description                                              |
-| --------------------------- | -------------------------------------- | -------- | ------------------------- | -------------------------------------------------------- |
+| --------------------------- | -------------------------------------- | -------- |---------------------------| -------------------------------------------------------- |
 | `avatarId`                  | `number`                               | Yes      | -                         | The ID of the avatar to embed                            |
 | `avatarInstanceId`          | `number \| null`                       | Yes      | -                         | Avatar instance ID                                       |
-| `baseUrl`                   | `string`                               | No       | `https://app.discerns.com` | Base URL for the Discerns app                            |
+| `baseUrl`                   | `string`                               | No       | `https://app.discerns.ai` | Base URL for the Discerns app                            |
 | `memoizedTools`             | `RegisteredTool[]`                     | No       | -                         | Tools to register (must be memoized)                     |
 | `avatarContext`             | `string`                               | No       | -                         | Avatar-specific context string                           |
 | `memoizedEnvironmentContext`| `Record<string, EnvironmentContext>`   | No       | -                         | Environment context key-value pairs (must be memoized)   |
@@ -344,6 +344,8 @@ function App() {
         memoizedTools={tools}
         avatarContext="The user is a premium subscriber interested in enterprise features."
         memoizedEnvironmentContext={environmentContext}
+        theme="dark"
+        accent="#6366f1"
         onConnectionStatusChange={setIsConnected}
         onNewConversation={(conversationId) => {
           console.log('New conversation started:', conversationId);
