@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState, type CSSProperties, useEffectEvent } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, useEffectEvent } from 'react';
 import type { EnvironmentContext, RegisteredTool, WebsiteProtocol } from '../js';
 import { connectToDiscernsChatbot } from '../js';
 
@@ -139,12 +139,13 @@ export function DiscernsChatbot({
         ref={ref}
         allow="microphone; picture-in-picture;"
         className={className}
-        style={{
-            border: 'solid 1px #dad5cf',
-            borderRadius: '1.3rem',
-            width: '60ch',
-            height: 'min(calc(100dvh - 1rem), 70ch)',
-            ...style,
-        }}
+        style={style 
+            ? style
+            : {
+                border: 'solid 1px #dad5cf',
+                borderRadius: '1.3rem',
+                width: 'min(50ch, 100%)',
+                height: 'min(90dvh, 60ch)',
+            }}
     />;
 }

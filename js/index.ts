@@ -20,7 +20,7 @@ type MakeEmbedOptions = {
     target: HTMLElement
     baseUrl?: string
     avatarId: number
-    avatarInstanceId: string | null
+    avatarInstanceId: number | null
     style?: string,
     theme?: 'dark' | 'light'
     accent?: string
@@ -29,7 +29,9 @@ type MakeEmbedOptions = {
 
 export async function createDiscernsEmbed(options: MakeEmbedOptions) {
     const iframe = document.createElement('iframe');
-    iframe.style = `border: solid 1px #dad5cf; border-radius: 1.3rem; width: 60ch; height: min(calc(100dvh - 1rem), 70ch); ${options.style || ''}`;
+    iframe.style = options.style 
+        ? options.style
+        : 'border: solid 1px #dad5cf; border-radius: 1.3rem; width: min(50ch, 100%); height: min(90dvh, 60ch);';
     iframe.className = options.className || '';
     const baseUrl = options.baseUrl || 'https://app.discerns.ai';
     iframe.src = `${baseUrl}/avatars/${options.avatarId}/chat/embed?${options.avatarInstanceId ? `avatarInstanceId=${options.avatarInstanceId}&` : ''}theme=${options.theme || 'light'}${options.accent ? `&accent=${encodeURIComponent(options.accent)}` : ''}`;

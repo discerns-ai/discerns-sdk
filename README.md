@@ -76,10 +76,10 @@ Creates an embedded chatbot iframe and establishes a connection.
 #### Options
 
 | Property           | Type          | Required | Default                  | Description                          |
-| ------------------ | ------------- | -------- | ------------------------ | ------------------------------------ |
+| ------------------ |---------------| -------- | ------------------------ | ------------------------------------ |
 | `target`           | `HTMLElement` | Yes      | -                        | The container element for the iframe |
 | `avatarId`         | `number`      | Yes      | -                        | The ID of the avatar to embed        |
-| `avatarInstanceId` | `string`      | No       | `null`                   | Optional avatar instance ID          |
+| `avatarInstanceId` | `number`      | No       | `null`                   | Optional avatar instance ID          |
 | `baseUrl`          | `string`      | No       | `https://app.discerns.ai` | Base URL for the Discerns app        |
 
 #### Returns
