@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties, useEffectEvent } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import type { EnvironmentContext, RegisteredTool, WebsiteProtocol } from '../js';
 import { connectToDiscernsChatbot } from '../js';
 
@@ -111,25 +111,33 @@ export function DiscernsChatbot({
             }
         };
     }, [protocol, memoizedEnvironmentContext]);
+    
+    const refStatusChange = useRef(onConnectionStatusChange);
+    useEffect(() => {
+        refStatusChange.current = onConnectionStatusChange;
+    }, [onConnectionStatusChange]);
+    
+    const refNewConversation = useRef(onNewConversation);
+    useEffect(() => {
+        refNewConversation.current = onNewConversation;
+    }, [onNewConversation]);
 
-    const onConnectionStatusChangeHandler = useEffectEvent((connected: boolean) => {
-        onConnectionStatusChange?.(connected);
-    });
 
-    const onNewConversationHandler = useEffectEvent((conversationId: string) => {
-        onNewConversation?.(conversationId);
-    });
 
     useEffect(() => {
         if (!protocol) return;
 
-        return protocol.onConnectionStatus(onConnectionStatusChangeHandler);
+        return protocol.onConnectionStatus(connected => {
+            refStatusChange.current?.(connected);
+        });
     }, [protocol]);
 
     useEffect(() => {
         if (!protocol) return;
 
-        return protocol.onNewConversation(onNewConversationHandler);
+        return protocol.onNewConversation(c => {
+            refNewConversation.current?.(c);
+        });
     }, [protocol]);
 
     const url = `${baseUrl}/avatars/${avatarId}/chat/embed?${avatarInstanceId ? `avatarInstanceId=${avatarInstanceId}&` : ''}theme=${theme || 'light'}${accent ? `&accent=${encodeURIComponent(accent)}` : ''}`;
