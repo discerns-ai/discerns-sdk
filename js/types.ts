@@ -61,6 +61,7 @@ export type ChatbotToWebsiteTellSchema = {
     'website:connection-status': TellEvent<{
         connected: boolean
     }>
+    'website:chatbot-ready': TellEvent<Record<string, never>>
 };
 
 // ============================================

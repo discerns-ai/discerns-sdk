@@ -54,12 +54,54 @@ export async function connectToDiscernsChatbot(
     // Map to store registered tools
     const registeredTools = new Map<string, RegisteredTool>();
 
+    // Track context and avatar state for re-sync on reconnection
+    const registeredContexts = new Map<string, EnvironmentContext>();
+    let currentAvatarContext: string | null = null;
+
     let messageIdCounter = 0;
     let isConnected = false;
 
     // Declare tell events that the website can receive from chatbot
     incomingProtocol.declareTellEvent('website:new-conversation');
     incomingProtocol.declareTellEvent('website:connection-status');
+    incomingProtocol.declareTellEvent('website:chatbot-ready');
+
+    // Handle chatbot ready signal (fires on initial load and reconnection)
+    incomingProtocol.on('website:chatbot-ready', () => {
+        void resyncState();
+    });
+
+    async function resyncState() {
+        // Establish connection first
+        try {
+            await askChatbot('chatbot:ping', undefined as void, 5000);
+        } catch {
+            return;
+        }
+
+        // Re-register all tools
+        for (const tool of registeredTools.values()) {
+            try {
+                await askChatbot('chatbot:register-tool', {
+                    name: tool.name,
+                    description: tool.description,
+                    schema: z.toJSONSchema(tool.schema),
+                });
+            } catch (error) {
+                console.error(`Failed to re-register tool "${tool.name}":`, error);
+            }
+        }
+
+        // Re-send all context
+        for (const [keyName, value] of registeredContexts.entries()) {
+            tellChatbot('chatbot:add-necessary-context', { keyName, value });
+        }
+
+        // Re-send avatar context
+        if (currentAvatarContext !== null) {
+            tellChatbot('chatbot:set-avatar-context', { avatarContext: currentAvatarContext });
+        }
+    }
 
     // Register handlers for ask events from chatbot
     incomingProtocol.registerUniqueAskHandler('website:ping', () => 'pong');
@@ -244,6 +286,7 @@ export async function connectToDiscernsChatbot(
      * Add context that the chatbot should use
      */
     function addToContext(keyName: string, value: EnvironmentContext) {
+        registeredContexts.set(keyName, value);
         tellChatbot('chatbot:add-necessary-context', { keyName, value });
     }
 
@@ -251,6 +294,7 @@ export async function connectToDiscernsChatbot(
      * Remove context from the chatbot
      */
     function removeFromContext(keyName: string) {
+        registeredContexts.delete(keyName);
         tellChatbot('chatbot:remove-necessary-context', { keyName });
     }
 
@@ -258,6 +302,7 @@ export async function connectToDiscernsChatbot(
      * Set the avatar context
      */
     function setAvatarContext(avatarContext: string | null) {
+        currentAvatarContext = avatarContext;
         tellChatbot('chatbot:set-avatar-context', { avatarContext });
     }
 
@@ -316,6 +361,7 @@ export async function connectToDiscernsChatbot(
         window.removeEventListener('message', handleMessage);
         pendingAskResponses.clear();
         registeredTools.clear();
+        registeredContexts.clear();
     }
     
     function awaitConnection() {
