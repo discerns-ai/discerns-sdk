@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { type CSSProperties, useEffect, useRef, useState } from 'react';
 import type { EnvironmentContext, RegisteredTool, WebsiteProtocol } from '../js';
 import { connectToDiscernsChatbot } from '../js';
 
